@@ -1,0 +1,25 @@
+server {
+        listen 80;
+        root /maestria-web/Public;
+        index index.php index.html index.htm;
+        server_name maestria.dev *.maestria.dev;
+
+        location / {
+                try_files $uri @rewrite;
+        }
+
+        location @rewrite {
+                # Some modules enforce no slash (/) at the end of the URL
+                # Else this rewrite block wouldn't be needed (GlobalRedirect)
+                rewrite ^/(.*)$ /index.php?q=$1;
+        }
+
+        location ~ \.php$ {
+                include fastcgi_params;
+                fastcgi_pass unix:/var/run/php5-fpm.sock;
+        }
+
+        location ~ /\.ht {
+                deny all;
+        }
+}
